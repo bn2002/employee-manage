@@ -1,13 +1,20 @@
 package com.bn2002.cukcuk.api.exceptions;
 
 import com.bn2002.cukcuk.api.models.ResponseObject;
+import com.bn2002.cukcuk.api.models.ValidationObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.xml.bind.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,6 +26,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("error", exception.getMessage(), ""));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseObject> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        List<ValidationObject> validationObjectList = new ArrayList<ValidationObject>();
+        exception.getBindingResult().getFieldErrors().forEach(fieldError -> {
+            validationObjectList.add(new ValidationObject(fieldError.getField(), fieldError.getDefaultMessage()));
+        });
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Lỗi dữ liệu đầu vào", validationObjectList));
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseObject> handleUnwantedException(Exception e) {
         e.printStackTrace();
