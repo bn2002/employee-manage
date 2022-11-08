@@ -18,4 +18,11 @@ public class GlobalExceptionHandler {
     ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseObject("error", exception.getMessage(), ""));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseObject> handleUnwantedException(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ResponseObject("error", "Unknow error", ""));
+    }
+
 }
