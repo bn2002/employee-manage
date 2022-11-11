@@ -40,7 +40,7 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee createNewEmployee(EmployeeDto employee) {
+    public void createNewEmployee(EmployeeDto employee) {
         // Kiểm tra email tồn tại hay chưa
         Optional<Employee> isEmailExist =  employeeRepository.getEmployeesByEmail(employee.getEmail());
         if(isEmailExist.isPresent()) {
@@ -75,7 +75,7 @@ public class EmployeeService {
         Employee newEmployee = modelMapper.map(employee, Employee.class);
         System.out.println(newEmployee.toString());
         employeeRepository.save(newEmployee);
-        return newEmployee;
+        return ;
     }
 
     public boolean checkExists(String employeeCode) {
@@ -89,5 +89,14 @@ public class EmployeeService {
         }
         String newEmployeeCode = "NV" + String.valueOf(Integer.parseInt(currentEmployeeCode.substring(2, currentEmployeeCode.length()) + 1));
         return newEmployeeCode;
+    }
+
+    public EmployeeDto getEmployeeBgId(String id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if(!employee.isPresent()) {
+            throw new NoSuchElementException("Nhân viên này không tồn tại, vui lòng kiểm tra lại");
+        }
+        EmployeeDto employeeDto = modelMapper.map(employee.get(), EmployeeDto.class);
+        return employeeDto;
     }
 }
