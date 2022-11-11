@@ -10,6 +10,7 @@ import com.bn2002.cukcuk.api.repositories.PositionRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.persistence.EntityExistsException;
@@ -91,7 +92,7 @@ public class EmployeeService {
         return newEmployeeCode;
     }
 
-    public EmployeeDto getEmployeeBgId(String id) {
+    public EmployeeDto getEmployeeById(String id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if(!employee.isPresent()) {
             throw new NoSuchElementException("Nhân viên này không tồn tại, vui lòng kiểm tra lại");
@@ -99,4 +100,76 @@ public class EmployeeService {
         EmployeeDto employeeDto = modelMapper.map(employee.get(), EmployeeDto.class);
         return employeeDto;
     }
+    public void updateEmployeeById(String employeeId, EmployeeDto newEmployeeData) {
+        Optional<Employee> employees = employeeRepository.findById(employeeId);
+        if(!employees.isPresent()) {
+            throw new NoSuchElementException("Nhân viên này không tồn tại, hãy kiểm tra lại");
+        }
+        Employee employee = employees.get();
+        // Nếu thay đổi mã nhân viên thì phải check xem mã nhân viên đó đã có ai sử dụng chưa
+        if(newEmployeeData.getEmployeeCode().length() >  0 && employee.getEmployeeCode().equals(newEmployeeData.getEmployeeCode()) == false) {
+            Optional<Employee> isExistsEmployeeCode = employeeRepository.getEmployeesByEmployeeCodeAndIdNot(newEmployeeData.getEmployeeCode(), employeeId);
+            if(isExistsEmployeeCode.isPresent()) {
+                throw  new EntityExistsException("Mã nhân viên này đã tồn tại, hãy sử dụng số khác");
+            }
+        }
+        // Nếu email thay đổi,check xem email đã có ai dùng chưa
+        if(newEmployeeData.getEmail().length() > 0 && employee.getEmail().equals(newEmployeeData.getEmail()) == false) {
+            Optional<Employee> isExistsEmail = employeeRepository.getEmployeesByEmailAndIdNot(newEmployeeData.getEmail(), employeeId);
+            if(isExistsEmail.isPresent()) {
+                throw new EntityExistsException("Địa chỉ email này đã tồn tại, hãy sử dụng địa chỉ khác");
+            }
+        }
+        // Nếu CMND/CCCD thay đổi, check xem đã có ai dùng số đó chưa
+        if(newEmployeeData.getIdentityNumber().length() > 0 && employee.getIdentityNumber().equals(newEmployeeData.getIdentityNumber()) == false) {
+            Optional<Employee> isExistsIdentityNumber = employeeRepository.getEmployeesByIdentityNumberAndIdNot(newEmployeeData.getIdentityNumber(), employeeId);
+            if(isExistsIdentityNumber.isPresent()) {
+                throw new EntityExistsException("Số CMND/CCCD này đã tồn tại, hãy sử dụng số khác");
+            }
+        }
+
+        // Nếu có thay đổi về vị trí làm việc, cần lấy lại tên vị trí
+        String positionName = employee.getPostionName();
+        if(employee.getPositionId().equals(newEmployeeData.getPositionId()) == false) {
+            Optional<Position> position = positionRepository.getPositionById(employee.getPositionId());
+            if(!position.isPresent()) {
+                throw new NoSuchElementException("Vị trí này không tồn tại");
+            }
+            positionName = position.get().getPositionName();
+        }
+
+        // Nếu thay đổi về phòng ban làm việc, cần lấy lại tn phòng ban
+        String departmentName = employee.getDepartmentName();
+        if(employee.getDepartmentId().equals(newEmployeeData.getDepartmentId()) == false) {
+            Optional<Department> department = departmentRepository.getDepartmentById(employee.getDepartmentId());
+            if(!department.isPresent()) {
+                throw new NoSuchElementException("Phòng ban này không tồn tại");
+            }
+            departmentName = department.get().getDepartmentName();
+        }
+
+
+        employee.setEmployeeCode(newEmployeeData.getEmployeeCode());
+        employee.setEmployeeName(newEmployeeData.getEmployeeName());
+        employee.setDateOfBirth(newEmployeeData.getDateOfBirth());
+        employee.setGender(newEmployeeData.getGender());
+        employee.setIdentityNumber(newEmployeeData.getIdentityNumber());
+        employee.setIdentityIssuedPlace(newEmployeeData.getIdentityIssuedPlace());
+        employee.setIdentityIssuedDate(newEmployeeData.getIdentityIssuedDate());
+        employee.setEmail(newEmployeeData.getEmail());
+        employee.setPhoneNumber(newEmployeeData.getPhoneNumber());
+        employee.setPositionId(newEmployeeData.getPositionId());
+        employee.setPostionName(positionName);
+        employee.setDepartmentId(newEmployeeData.getDepartmentId());
+        employee.setDepartmentName(departmentName);
+        employee.setTaxCode(newEmployeeData.getTaxCode());
+        employee.setSalary(newEmployeeData.getSalary());
+        employee.setJoiningDate(newEmployeeData.getJoiningDate());
+        employee.setWorkStatus(newEmployeeData.getWorkStatus());
+        employee.setDateOfBirth(newEmployeeData.getDateOfBirth());
+        employee.setModifiedDate(LocalDateTime.now());
+        employeeRepository.save(employee);
+    }
+
+
 }
