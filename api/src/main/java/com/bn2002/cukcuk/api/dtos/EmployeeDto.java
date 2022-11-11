@@ -5,15 +5,17 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.lang.Nullable;
 
+import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
 public class EmployeeDto {
-    private UUID id;
+    @Id
+    private String id;
     @NotEmpty(message = "Vui lòng nhập mã nhân viên")
     @Size(min = 7, max = 7, message = "Độ dài mã nhân viên gồm 7 ký tự")
     private String employeeCode;
@@ -51,7 +53,6 @@ public class EmployeeDto {
     private BigDecimal salary;
     private Date joiningDate;
     private int workStatus;
-    private Date createdDate;
+    private LocalDateTime createdDate;
     private String createdBy;
-
 }
