@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityExistsException;
 import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,16 @@ public class GlobalExceptionHandler {
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("error", "Lỗi dữ liệu đầu vào", validationObjectList));
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseObject> handleUnwantedException(Exception e) {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ResponseObject("error", "Unknow error", ""));
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ResponseObject> handleEntityExistsException(EntityExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseObject("error", e.getMessage(), ""));
     }
 
 }
