@@ -50,8 +50,12 @@ public class EmployeeDto {
     private String departmentId;
     private String departmentName;
     private String taxCode;
+    @NotNull(message = "Lương không được để trống")
     private BigDecimal salary;
+    @Past
     private Date joiningDate;
+    @NotNull(message = "Hãy nhập tình trạng làm việc")
+    @Range(min = 0, max = 2, message = "Tình trạng làm việc không hợp lệ")
     private int workStatus;
     private LocalDateTime createdDate;
     private String createdBy;

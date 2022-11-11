@@ -1,7 +1,16 @@
 package com.bn2002.cukcuk.api.models;
 
+import org.apache.juli.logging.LogFactory;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -9,10 +18,13 @@ import java.util.UUID;
 @Entity
 @Table(name = "Employee")
 public class Employee {
+    private static final Logger log = LoggerFactory.getLogger(Employee.class);
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
     @Column(name = "EmployeeID")
-    private UUID id;
+    private String id;
     @Column(name = "EmployeeCode", length = 20)
     private String employeeCode;
     @Column(name = "EmployeeName", length  = 100)
@@ -48,17 +60,19 @@ public class Employee {
     @Column(name = "WorkStatus")
     private Integer workStatus;
     @Column(name = "CreatedDate")
-    private Date createdDate;
+    @CreationTimestamp
+    private LocalDateTime createdDate;
     @Column(name = "CreatedBy", length = 100)
     private String createdBy;
     @Column(name = "ModifiedDate")
-    private Date modifiedDate;
+    @LastModifiedDate
+    private LocalDateTime modifiedDate;
     @Column(name = "ModifiedBy")
     private String modifiedBy;
 
     public Employee() {};
 
-    public Employee(String employeeCode, String employeeName, Date dateOfBirth, Integer gender, String identityNumber, String identityIssuedPlace, Date identityIssuedDate, String email, String phoneNumber, String positionId, String postionName, String departmentId, String departmentName, String taxCode, BigDecimal salary, Date joiningDate, Integer workStatus, Date createdDate, String createdBy, Date modifiedDate, String modifiedBy) {
+    public Employee(String employeeCode, String employeeName, Date dateOfBirth, Integer gender, String identityNumber, String identityIssuedPlace, Date identityIssuedDate, String email, String phoneNumber, String positionId, String postionName, String departmentId, String departmentName, String taxCode, BigDecimal salary, Date joiningDate, Integer workStatus, LocalDateTime createdDate, String createdBy, LocalDateTime modifiedDate, String modifiedBy) {
         this.employeeCode = employeeCode;
         this.employeeName = employeeName;
         this.dateOfBirth = dateOfBirth;
@@ -110,11 +124,11 @@ public class Employee {
                 '}';
     }
 
-    public UUID getEmployeeID() {
+    public String getEmployeeID() {
         return id;
     }
 
-    public void setEmployeeID(UUID employeeID) {
+    public void setEmployeeID(String employeeID) {
         id = employeeID;
     }
 
@@ -254,11 +268,11 @@ public class Employee {
         this.workStatus = workStatus;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -270,11 +284,11 @@ public class Employee {
         this.createdBy = createdBy;
     }
 
-    public Date getModifiedDate() {
+    public LocalDateTime getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
+    public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
@@ -286,6 +300,10 @@ public class Employee {
         this.modifiedBy = modifiedBy;
     }
 
+    @PreUpdate
+    public void preUpdateFunction() {
+        log.info("Update employee " + employeeName);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
