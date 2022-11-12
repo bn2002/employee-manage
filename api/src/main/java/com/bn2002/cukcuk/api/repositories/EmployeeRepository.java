@@ -1,11 +1,10 @@
 package com.bn2002.cukcuk.api.repositories;
 
 import com.bn2002.cukcuk.api.models.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import javax.persistence.PreUpdate;
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 
@@ -24,6 +23,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     Optional<Employee> getEmployeesByEmailAndIdNot(String email, String employeeId);
 
     Optional<Employee> getEmployeesByIdentityNumberAndIdNot(String identityNumber, String employeeId);
-}
 
+    Page<Employee> findEmployeesByEmployeeNameContainingOrPhoneNumberContainingOrEmployeeCodeContaining(String keyword, Pageable pageable);
+}
 
