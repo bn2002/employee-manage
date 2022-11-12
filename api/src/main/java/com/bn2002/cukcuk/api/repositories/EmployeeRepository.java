@@ -2,7 +2,11 @@ package com.bn2002.cukcuk.api.repositories;
 import com.bn2002.cukcuk.api.models.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,5 +26,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>,
     Optional<Employee> getEmployeesByEmailAndIdNot(String email, String employeeId);
 
     Optional<Employee> getEmployeesByIdentityNumberAndIdNot(String identityNumber, String employeeId);
+    @Transactional
+    @Modifying
+    int deleteAllByIdIn(List<String> ids);
 }
 

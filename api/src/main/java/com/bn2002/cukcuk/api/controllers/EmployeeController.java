@@ -5,6 +5,7 @@ import com.bn2002.cukcuk.api.models.ResponseObject;
 import com.bn2002.cukcuk.api.services.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,13 @@ public class EmployeeController {
     public ResponseEntity<ResponseObject> getLastestEmployeeCode() {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("success", "", employeeService.getLastestEmployeeCode()));
     }
+
+    @DeleteMapping("/delete-employee")
+    public ResponseEntity<ResponseObject> deleteEmployees(@RequestBody List<String> ids) {
+        int countDeleted = employeeService.deleteEmployeeByListId(ids);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("success", "Xóa thành công", countDeleted));
+    }
+
+
 
 }

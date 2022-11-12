@@ -16,15 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -218,6 +212,10 @@ public class EmployeeService {
         employee.setDateOfBirth(newEmployeeData.getDateOfBirth());
         employee.setModifiedDate(LocalDateTime.now());
         employeeRepository.save(employee);
+    }
+
+    public int deleteEmployeeByListId(List<String> ids) {
+       return employeeRepository.deleteAllByIdIn(ids);
     }
 
 
