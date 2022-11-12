@@ -79,9 +79,10 @@ public class EmployeeService {
         List<Employee> employees = new ArrayList<Employee>();
         pageEmpl = employeeRepository.findAll(spec, paging);
         employees = pageEmpl.getContent();
+        // Mapping qua Dto
         Map<String, Object> response = new HashMap<>();
-
-        response.put("employees", employees);
+        List<EmployeeDto> employeesDto = Arrays.asList(modelMapper.map(employees, EmployeeDto[].class));
+        response.put("employees", employeesDto);
         response.put("currentPage", pageEmpl.getNumber());
         response.put("totalItems", pageEmpl.getTotalElements());
         response.put("totaPages", pageEmpl.getTotalPages());
