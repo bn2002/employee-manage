@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "Employee")
-public class Employee {
+public class Employee implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(Employee.class);
 
     @Id

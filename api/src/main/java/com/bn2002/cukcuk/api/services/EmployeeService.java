@@ -7,24 +7,28 @@ import com.bn2002.cukcuk.api.models.Position;
 import com.bn2002.cukcuk.api.repositories.DepartmentRepository;
 import com.bn2002.cukcuk.api.repositories.EmployeeRepository;
 import com.bn2002.cukcuk.api.repositories.PositionRepository;
+import com.bn2002.cukcuk.api.repositories.specs.EmployeeSpecification;
+import com.bn2002.cukcuk.api.repositories.specs.SearchCriteria;
+import com.bn2002.cukcuk.api.repositories.specs.SearchOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.persistence.EntityExistsException;
-import javax.swing.text.html.Option;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 public class EmployeeService {
@@ -37,8 +41,52 @@ public class EmployeeService {
 
     @Autowired
     private ModelMapper modelMapper;
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public Map<String, Object> getAllEmployees(int page, int size, String keyword, String positionId, String departmentId) {
+        Specification<Employee> spec = where(null);
+
+        // Tìm kiếm theo từ khóa
+        if(keyword.length() > 0) {
+            EmployeeSpecification esEmployeeCode = new EmployeeSpecification();
+            esEmployeeCode.add(new SearchCriteria("employeeCode", keyword, SearchOperation.MATCH));
+            spec = spec.and(esEmployeeCode);
+
+            EmployeeSpecification esEmployeeName = new EmployeeSpecification();
+            esEmployeeName.add(new SearchCriteria("employeeName", keyword, SearchOperation.MATCH));
+            spec = spec.or(esEmployeeName);
+
+            EmployeeSpecification esEmployeePhone = new EmployeeSpecification();
+            esEmployeePhone.add(new SearchCriteria("phoneNumber", keyword, SearchOperation.MATCH));
+            spec = spec.or(esEmployeePhone);
+        }
+
+        // Nếu người dùng filter theo positionId
+        if(positionId.length() > 0) {
+            EmployeeSpecification esPositionId = new EmployeeSpecification();
+            esPositionId.add(new SearchCriteria("positionId", positionId, SearchOperation.EQUAL));
+            spec = spec.and(esPositionId);
+        }
+
+        // Nếu người dùng filter theo departmentId
+        if(departmentId.length() > 0) {
+            EmployeeSpecification esDepartmentId = new EmployeeSpecification();
+            esDepartmentId.add(new SearchCriteria("departmentId", departmentId, SearchOperation.EQUAL));
+            spec = spec.and(esDepartmentId);
+        }
+
+
+        Pageable paging = PageRequest.of(page, size);
+        Page<Employee> pageEmpl;
+        List<Employee> employees = new ArrayList<Employee>();
+        pageEmpl = employeeRepository.findAll(spec, paging);
+        employees = pageEmpl.getContent();
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("employees", employees);
+        response.put("currentPage", pageEmpl.getNumber());
+        response.put("totalItems", pageEmpl.getTotalElements());
+        response.put("totaPages", pageEmpl.getTotalPages());
+
+        return response;
     }
 
     public void createNewEmployee(EmployeeDto employee) {

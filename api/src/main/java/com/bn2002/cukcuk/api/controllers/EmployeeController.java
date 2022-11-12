@@ -1,7 +1,6 @@
 package com.bn2002.cukcuk.api.controllers;
 
 import com.bn2002.cukcuk.api.dtos.EmployeeDto;
-import com.bn2002.cukcuk.api.models.Employee;
 import com.bn2002.cukcuk.api.models.ResponseObject;
 import com.bn2002.cukcuk.api.services.EmployeeService;
 import org.modelmapper.ModelMapper;
@@ -11,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/api/v1/employee")
@@ -23,8 +20,16 @@ public class EmployeeController {
     @Autowired
     private ModelMapper modelMapper;
     @GetMapping("")
-    public List<EmployeeDto> getAllEmployees() {
-        return employeeService.getAllEmployees().stream().map(employee -> modelMapper.map(employee, EmployeeDto.class)).collect(Collectors.toList());
+    public ResponseEntity<ResponseObject> getAllEmployees(
+            @RequestParam(defaultValue = "", name = "keyword") String keyword,
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "10", name = "size") int size,
+            @RequestParam(defaultValue = "", name = "position_id") String positionId,
+            @RequestParam(defaultValue = "", name = "department_id") String departmentId
+    ) {
+
+        Map<String, Object> response = employeeService.getAllEmployees(page, size, keyword, positionId, departmentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("success", "", response));
     }
 
     @PostMapping("")
