@@ -1,8 +1,11 @@
 package com.bn2002.cukcuk.api.models;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name = "department")
@@ -10,7 +13,7 @@ public class Department {
     @Id
     @GeneratedValue
     @Column(name = "DepartmentId")
-    private UUID id;
+    private String id;
 
     @Column(name = "DepartmentCode", nullable = false, unique = true, length = 20)
     private String departmentCode;
@@ -19,15 +22,17 @@ public class Department {
     @Column(name = "CreatedBy", length = 100)
     private String createdBy;
     @Column(name = "CreatedDate")
-    private Date createdDate;
+    @CreatedDate
+    private LocalDateTime createdDate;
     @Column(name = "ModifiedDate")
-    private Date modifiedDate;
+    @LastModifiedDate
+    private LocalDateTime modifiedDate;
     @Column(name = "ModifiedBy", length = 100)
     private String modifiedBy;
 
     public Department() {};
 
-    public Department(String departmentCode, String departmentName, String createdBy, Date createdDate, Date modifiedDate, String modifiedBy) {
+    public Department(String departmentCode, String departmentName, String createdBy, LocalDateTime createdDate, LocalDateTime modifiedDate, String modifiedBy) {
         this.departmentCode = departmentCode;
         this.departmentName = departmentName;
         this.createdBy = createdBy;
@@ -36,11 +41,11 @@ public class Department {
         this.modifiedBy = modifiedBy;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -68,19 +73,19 @@ public class Department {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getModifiedDate() {
+    public LocalDateTime getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
+    public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 

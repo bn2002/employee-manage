@@ -1,6 +1,7 @@
 package com.bn2002.cukcuk.api.services;
 
 import com.bn2002.cukcuk.api.dtos.EmployeeDto;
+import com.bn2002.cukcuk.api.dtos.EmployeeResponseDto;
 import com.bn2002.cukcuk.api.models.Department;
 import com.bn2002.cukcuk.api.models.Employee;
 import com.bn2002.cukcuk.api.models.Position;
@@ -75,11 +76,11 @@ public class EmployeeService {
         employees = pageEmpl.getContent();
         // Mapping qua Dto
         Map<String, Object> response = new HashMap<>();
-        List<EmployeeDto> employeesDto = Arrays.asList(modelMapper.map(employees, EmployeeDto[].class));
+        List<EmployeeResponseDto> employeesDto = Arrays.asList(modelMapper.map(employees, EmployeeResponseDto[].class));
         response.put("employees", employeesDto);
         response.put("currentPage", pageEmpl.getNumber());
         response.put("totalItems", pageEmpl.getTotalElements());
-        response.put("totaPages", pageEmpl.getTotalPages());
+        response.put("totalPages", pageEmpl.getTotalPages());
 
         return response;
     }
@@ -113,7 +114,7 @@ public class EmployeeService {
         }
         // Set 1 số giá trị theo ID mà người dùng cung cấp
         employee.setDepartmentName(department.get().getDepartmentName());
-        employee.setPostionName(position.get().getPositionName());
+        employee.setPositionName(position.get().getPositionName());
         employee.setCreatedBy("Nguyen Duy Doanh");
         // Map Dto qua Entity
         Employee newEmployee = modelMapper.map(employee, Employee.class);
@@ -131,7 +132,7 @@ public class EmployeeService {
         if(currentEmployeeCode.length() < 1) {
             return "NV00001";
         }
-        String newEmployeeCode = "NV" + String.valueOf(Integer.parseInt(currentEmployeeCode.substring(2, currentEmployeeCode.length()) + 1));
+        String newEmployeeCode = "NV" + String.valueOf(Integer.parseInt(currentEmployeeCode.substring(2, currentEmployeeCode.length())) + 1);
         return newEmployeeCode;
     }
 
@@ -172,7 +173,7 @@ public class EmployeeService {
         }
 
         // Nếu có thay đổi về vị trí làm việc, cần lấy lại tên vị trí
-        String positionName = employee.getPostionName();
+        String positionName = employee.getPositionName();
         if(employee.getPositionId().equals(newEmployeeData.getPositionId()) == false) {
             Optional<Position> position = positionRepository.getPositionById(employee.getPositionId());
             if(!position.isPresent()) {
@@ -202,7 +203,7 @@ public class EmployeeService {
         employee.setEmail(newEmployeeData.getEmail());
         employee.setPhoneNumber(newEmployeeData.getPhoneNumber());
         employee.setPositionId(newEmployeeData.getPositionId());
-        employee.setPostionName(positionName);
+        employee.setPositionName(positionName);
         employee.setDepartmentId(newEmployeeData.getDepartmentId());
         employee.setDepartmentName(departmentName);
         employee.setTaxCode(newEmployeeData.getTaxCode());

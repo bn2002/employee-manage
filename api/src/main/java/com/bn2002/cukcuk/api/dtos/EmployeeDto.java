@@ -1,5 +1,4 @@
 package com.bn2002.cukcuk.api.dtos;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
@@ -44,7 +43,7 @@ public class EmployeeDto {
     @Pattern(message = "ID vị trí không hợp lệ", regexp = "[a-f0-9]{8}(?:-[a-f0-9]{4}){4}[a-f0-9]{8}")
     private String positionId;
     @Nullable
-    private String postionName;
+    private String positionName;
     @NotEmpty(message = "Mã phòng ban không được để trống")
     @Pattern(message = "Mã phòng ban không hợp lệ", regexp = "[a-f0-9]{8}(?:-[a-f0-9]{4}){4}[a-f0-9]{8}")
     private String departmentId;
