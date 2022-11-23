@@ -14,8 +14,8 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT).setAmbiguityIgnored(true);
-        modelMapper.createTypeMap(Employee.class, EmployeeDto.class)
-                .addMapping(Employee::getEmployeeID, EmployeeDto::setId);
+        modelMapper.createTypeMap(Employee.class, EmployeeDto.class);
+                //.addMapping(Employee::getEmployeeID, EmployeeDto::setId);
         return modelMapper;
     }
 }

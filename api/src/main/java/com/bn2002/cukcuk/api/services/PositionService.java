@@ -14,4 +14,5 @@ public class PositionService {
     public List<Position> getAllPositions() {
         return repository.findAll();
     }
+
 }

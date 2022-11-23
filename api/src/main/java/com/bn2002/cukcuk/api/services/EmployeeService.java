@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -68,8 +69,12 @@ public class EmployeeService {
             spec = spec.and(esDepartmentId);
         }
 
+        Pageable paging = PageRequest.of(page, size, Sort.by(
+                Sort.Order.desc("createdDate"),
+                Sort.Order.desc("modifiedDate")
 
-        Pageable paging = PageRequest.of(page, size);
+                )
+        );
         Page<Employee> pageEmpl;
         List<Employee> employees = new ArrayList<Employee>();
         pageEmpl = employeeRepository.findAll(spec, paging);
@@ -174,8 +179,8 @@ public class EmployeeService {
 
         // Nếu có thay đổi về vị trí làm việc, cần lấy lại tên vị trí
         String positionName = employee.getPositionName();
-        if(employee.getPositionId().equals(newEmployeeData.getPositionId()) == false) {
-            Optional<Position> position = positionRepository.getPositionById(employee.getPositionId());
+        if(employee.getPositionId() == null || employee.getPositionId().equals(newEmployeeData.getPositionId()) == false) {
+            Optional<Position> position = positionRepository.getPositionById(newEmployeeData.getPositionId());
             if(!position.isPresent()) {
                 throw new NoSuchElementException("Vị trí này không tồn tại");
             }
@@ -184,8 +189,8 @@ public class EmployeeService {
 
         // Nếu thay đổi về phòng ban làm việc, cần lấy lại tn phòng ban
         String departmentName = employee.getDepartmentName();
-        if(employee.getDepartmentId().equals(newEmployeeData.getDepartmentId()) == false) {
-            Optional<Department> department = departmentRepository.getDepartmentById(employee.getDepartmentId());
+        if(employee.getDepartmentId() == null || employee.getDepartmentId().equals(newEmployeeData.getDepartmentId()) == false) {
+            Optional<Department> department = departmentRepository.getDepartmentById(newEmployeeData.getDepartmentId());
             if(!department.isPresent()) {
                 throw new NoSuchElementException("Phòng ban này không tồn tại");
             }

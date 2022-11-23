@@ -5,7 +5,6 @@ import com.bn2002.cukcuk.api.models.ResponseObject;
 import com.bn2002.cukcuk.api.services.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +13,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(path = "/api/v1/employee")
 public class EmployeeController {
     @Autowired
@@ -42,7 +42,7 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getEmployeeById(@PathVariable String id) {
         EmployeeDto result = employeeService.getEmployeeById(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseObject("success", "Thông tin chi tiết nhân viên", result));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("success", "Thông tin chi tiết nhân viên", result));
     }
 
     @PutMapping("/{id}")
@@ -51,7 +51,7 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("success", "Cập nhật dữ liệu thành công", ""));
     }
 
-    @GetMapping("/get-lastest-employee-code")
+    @GetMapping("/get-new-employee-code")
     public ResponseEntity<ResponseObject> getLastestEmployeeCode() {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("success", "", employeeService.getLastestEmployeeCode()));
     }

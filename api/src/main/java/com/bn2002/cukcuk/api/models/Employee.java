@@ -1,8 +1,8 @@
 package com.bn2002.cukcuk.api.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.juli.logging.LogFactory;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
@@ -32,6 +32,7 @@ public class Employee implements Serializable {
     @Column(name = "EmployeeName", length  = 100)
     private String employeeName;
     @Column(name = "DateOfBirth")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
     @Column(name = "Gender")
     private Integer gender;

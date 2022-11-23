@@ -1,4 +1,5 @@
 package com.bn2002.cukcuk.api.dtos;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
@@ -23,7 +24,7 @@ public class EmployeeDto {
     private String employeeName;
     @Past(message = "Ngày tháng năm sinh không hợp lệ")
     private Date dateOfBirth;
-    @Range(min = 0, max = 1, message = "Giới tính bạn chọn không hợp lệ")
+    @Range(min = 0, max = 2, message = "Giới tính bạn chọn không hợp lệ")
     private int gender;
     @NotEmpty(message = "Số CMND/CCCD không hợp lệ")
     @Size(max = 25, message = "Số CMND/CCCD tối đa 25 ký tự")
@@ -37,7 +38,7 @@ public class EmployeeDto {
     @Email(message = "Địa chỉ email không hợp lệ")
     private String email;
     @NotEmpty(message = "Vui lòng nhập số điện thoại")
-    @Size(max = 10, message = "Số điện thoại không hợp lệ")
+    @Size(max = 15, message = "Số điện thoại không hợp lệ")
     private String phoneNumber;
     @NotEmpty(message = "ID vị trí không được để trống")
     @Pattern(message = "ID vị trí không hợp lệ", regexp = "[a-f0-9]{8}(?:-[a-f0-9]{4}){4}[a-f0-9]{8}")
